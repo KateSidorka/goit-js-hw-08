@@ -1,49 +1,27 @@
-import "simplelightbox/dist/simple-lightbox.min.css";
-import SimpleLightbox from "simplelightbox";
 import { galleryItems } from './gallery-items';
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
-const gallery = document.querySelector('.gallery');
 
-const galleryList = galleryItems.map(({preview, original, description}) => {
-  return `
-    <li class="gallery__item">
-      <a class="gallery__link" href="${original}">
-        <img class="gallery__image" src="${preview}" data-source="${original}" alt="${description}" />
-      </a>
-    </li>
-  `;
-}).join('');
-
-gallery.insertAdjacentHTML('afterbegin', galleryList);
-
-gallery.addEventListener('click', onClick);
-
-function onClick(event) {
-  event.preventDefault();
-  
-  if (event.target.tagName !== 'IMG') {
-    return;
-  }
-  
-  const instance = SimpleLightbox.create(`
-    <img width="1400" height="900" src="${event.target.dataset.source}">
-  `, {
-    onShow: () => {
-      document.addEventListener('keydown', closeModal);
-    },
-    onClose: () => {
-      document.removeEventListener('keydown', closeModal);
-    },
-  });
-  
-  instance.show();
-}
-
-function closeModal(event) {
-  if (event.code !== 'Escape') {
-    return;
-  } 
-  instance.close();
-}
-
+document.addEventListener("DOMContentLoaded", () => {
+    const gallery = new SimpleLightbox(".gallery a", {
+    });
+});
 console.log(galleryItems);
+
+const gallery = document.querySelector(".gallery");
+const items = [];
+
+galleryItems.map((e) => {
+    const galleryLink = document.createElement("a");
+    galleryLink.className = "gallery__link";
+    galleryLink.href = e.original;
+    const galleryImage = document.createElement("img");
+    galleryImage.className = "gallery__image";
+    galleryImage.src = e.preview;
+    galleryImage.setAttribute("title", e.description);
+    galleryImage.alt = e.description;
+    galleryLink.append(galleryImage);
+    items.push(galleryLink);
+});
+gallery.append(...items);
